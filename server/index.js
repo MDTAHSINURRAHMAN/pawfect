@@ -3,6 +3,9 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const bcrypt = require("bcrypt");
+const Groq = require("groq-sdk");
+const stripe = require("stripe");
+
 dotenv.config();
 
 const app = express();
@@ -11,7 +14,17 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.gs0hh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripeClient = stripe(process.env.STRIPE_SECRET_KEY);
+
+// Initialize Groq client
+let groqClient;
+try {
+
+  groqClient = new Groq(process.env.GROQ_API_KEY);
+
+} catch (error) {
+  console.error("Error initializing Groq:", error.message);
+}
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -530,6 +543,50 @@ async function run() {
         .find({ approved: true, adoptionStatus: "Available" })
         .toArray();
       res.send(result);
+    });
+
+    // AI Chat endpoint
+    app.post("/ai-chat", async (req, res) => {
+      try {
+        if (!groqClient) {
+          console.error("Groq client is not initialized");
+          return res.status(503).json({
+            error: "AI service is not available",
+            details: "Configuration error",
+          });
+        }
+
+        const { message } = req.body;
+
+        const completion = await groqClient.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a helpful pet adoption assistant. You can provide advice about pet care, adoption processes, and general pet-related information. Keep responses concise and friendly.",
+            },
+            {
+              role: "user",
+              content: message,
+            },
+          ],
+          model: "mixtral-8x7b-32768",
+          temperature: 0.7,
+          max_tokens: 150,
+          top_p: 1,
+        });
+
+        res.json({
+          response: completion.choices[0].message.content,
+          usage: completion.usage,
+        });
+      } catch (error) {
+        console.error("Groq API Error:", error);
+        res.status(500).json({
+          error: "Failed to get AI response",
+          details: error.message,
+        });
+      }
     });
 
     // Send a ping to confirm a successful connection

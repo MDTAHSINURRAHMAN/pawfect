@@ -32,6 +32,7 @@ import UserPrivateRoute from "./UserPrivateRoute";
 import AdminPrivateRoute from "./AdminPrivateRoute";
 import VolunteerPrivateRoute from "./VolunteerPrivateRoute";
 import Error from "../components/shared/Error";
+import Rescue from "../pages/Rescue";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
         <AdoptNow></AdoptNow>
       </UserPrivateRoute>
     ),
+  },
+  {
+    path: "/rescue",
+    element: <Rescue></Rescue>,
   },
   {
     path: "/user/dashboard",
