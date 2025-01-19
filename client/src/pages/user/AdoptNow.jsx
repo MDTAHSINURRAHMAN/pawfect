@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { FaPaw, FaMapMarkerAlt, FaDollarSign } from "react-icons/fa";
 import Navbar from "../../components/shared/Navbar";
@@ -23,8 +23,7 @@ const AdoptNow = () => {
       // Could include API call to update pet status, create adoption record etc.
       
       // For now just show success message
-      alert("Adoption request submitted successfully!");
-      navigate("/adopt");
+      navigate(`/user/payment/${id}`);
     } catch (error) {
       console.error("Error submitting adoption request:", error);
       alert("Error submitting adoption request. Please try again.");
@@ -44,7 +43,7 @@ const AdoptNow = () => {
       <Navbar />
       <div className="container mx-auto p-4 lg:p-8">
         <Helmet>
-          <title>Adopt {pet?.name} | Pawfect</title>
+          <title>{`Adopt ${pet?.name || ''} | Pawfect`}</title>
         </Helmet>
 
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">

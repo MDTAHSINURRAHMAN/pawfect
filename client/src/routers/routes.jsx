@@ -23,6 +23,11 @@ import Adopt from "../pages/user/Adopt";
 import AdoptNow from "../pages/user/AdoptNow";
 import UserDashboard from "../layouts/UserDashboard";
 import AllBookmarks from "../pages/user/AllBookmarks";
+import Payment from "../pages/user/payment/Payment";
+import PaymentSuccess from "../pages/user/payment/PaymentSuccess";
+import AdoptionRequest from "../pages/user/AdoptionRequest";
+import AllAdoptionRequest from "../pages/admin/AllAdoptionRequest";
+import AllAdoptedPets from "../pages/admin/AllAdoptedPets";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +50,19 @@ const router = createBrowserRouter([
         path: "bookmarks",
         element: <AllBookmarks></AllBookmarks>,
       },
+      {
+        path: "adoption-request",
+        element: <AdoptionRequest></AdoptionRequest>,
+      },
     ],
+  },
+  {
+    path: "/user/payment/:id",
+    element: <Payment></Payment>,
+  },
+  {
+    path: "/user/payment/success",
+    element: <PaymentSuccess></PaymentSuccess>,
   },
   {
     path: "/auth/login",
@@ -107,6 +124,14 @@ const router = createBrowserRouter([
       {
         path: "pets/pending/:id",
         element: <PendingPetDetails></PendingPetDetails>,
+      },
+      {
+        path: "adoption-requests",
+        element: <AllAdoptionRequest></AllAdoptionRequest>,
+      },
+      {
+        path: "adopted-pets",
+        element: <AllAdoptedPets></AllAdoptedPets>,
       },
     ],
   },

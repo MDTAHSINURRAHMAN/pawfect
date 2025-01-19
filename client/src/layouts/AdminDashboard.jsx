@@ -47,9 +47,15 @@ const AdminDashboard = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/admin/dashboard/adoptions" className="flex items-center p-3 text-gray-700 hover:bg-primary hover:text-white rounded-lg">
+                <Link to="/admin/dashboard/adoption-requests" className="flex items-center p-3 text-gray-700 hover:bg-primary hover:text-white rounded-lg">
                   <FaPaw className="w-5 h-5 mr-2" />
                   Adoption Requests
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin/dashboard/adopted-pets" className="flex items-center p-3 text-gray-700 hover:bg-primary hover:text-white rounded-lg">
+                  <FaPaw className="w-5 h-5 mr-2" />
+                  Adopted Pets
                 </Link>
               </li>
               <li>

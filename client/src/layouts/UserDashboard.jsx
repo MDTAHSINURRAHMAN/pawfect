@@ -28,7 +28,7 @@ const UserDashboard = () => {
           </li>
           <div className="divider"></div>
           <li>
-            <Link to="/user/dashboard/pets">
+            <Link to="/user/dashboard/adoption-request">
               <FaPaw />
               My Adoption Requests
             </Link>
