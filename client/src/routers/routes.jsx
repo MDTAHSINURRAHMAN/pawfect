@@ -28,6 +28,10 @@ import PaymentSuccess from "../pages/user/payment/PaymentSuccess";
 import AdoptionRequest from "../pages/user/AdoptionRequest";
 import AllAdoptionRequest from "../pages/admin/AllAdoptionRequest";
 import AllAdoptedPets from "../pages/admin/AllAdoptedPets";
+import UserPrivateRoute from "./UserPrivateRoute";
+import AdminPrivateRoute from "./AdminPrivateRoute";
+import VolunteerPrivateRoute from "./VolunteerPrivateRoute";
+import Error from "../components/shared/Error";
 
 const router = createBrowserRouter([
   {
@@ -40,11 +44,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/adopt/:id",
-    element: <AdoptNow></AdoptNow>,
+    element: (
+      <UserPrivateRoute>
+        <AdoptNow></AdoptNow>
+      </UserPrivateRoute>
+    ),
   },
   {
     path: "/user/dashboard",
-    element: <UserDashboard></UserDashboard>,
+    element: (
+      <UserPrivateRoute>
+        <UserDashboard></UserDashboard>
+      </UserPrivateRoute>
+    ),
     children: [
       {
         path: "bookmarks",
@@ -58,11 +70,19 @@ const router = createBrowserRouter([
   },
   {
     path: "/user/payment/:id",
-    element: <Payment></Payment>,
+    element: (
+      <UserPrivateRoute>
+        <Payment></Payment>
+      </UserPrivateRoute>
+    ),
   },
   {
     path: "/user/payment/success",
-    element: <PaymentSuccess></PaymentSuccess>,
+    element: (
+      <UserPrivateRoute>
+        <PaymentSuccess></PaymentSuccess>
+      </UserPrivateRoute>
+    ),
   },
   {
     path: "/auth/login",
@@ -87,10 +107,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin/dashboard",
-    element: <AdminDashboard></AdminDashboard>,
+    element: (
+      <AdminPrivateRoute>
+        <AdminDashboard></AdminDashboard>
+      </AdminPrivateRoute>
+    ),
     children: [
       {
-        path: "users", // Changed from absolute path to relative path
+        path: "users",
         element: <AllUsers></AllUsers>,
       },
       {
@@ -106,7 +130,7 @@ const router = createBrowserRouter([
         element: <VolunteerDetails></VolunteerDetails>,
       },
       {
-        path: "volunteers/pending/:email", 
+        path: "volunteers/pending/:email",
         element: <PendingVolunteerDetails></PendingVolunteerDetails>,
       },
       {
@@ -137,21 +161,29 @@ const router = createBrowserRouter([
   },
   {
     path: "/volunteer/dashboard",
-    element: <VolunteerDashboard></VolunteerDashboard>,
+    element: (
+      <VolunteerPrivateRoute>
+        <VolunteerDashboard></VolunteerDashboard>
+      </VolunteerPrivateRoute>
+    ),
     children: [
-        {
-            path: "users",
-            element: <VolunteerAllUsers></VolunteerAllUsers>,
-        },
-        {
-            path: "pets",
-            element: <VolunteerAllPets></VolunteerAllPets>,
-        },
-        {
-            path: "pets/add",
-            element: <VolunteerAddPet></VolunteerAddPet>,
-        },
+      {
+        path: "users",
+        element: <VolunteerAllUsers></VolunteerAllUsers>,
+      },
+      {
+        path: "pets",
+        element: <VolunteerAllPets></VolunteerAllPets>,
+      },
+      {
+        path: "pets/add",
+        element: <VolunteerAddPet></VolunteerAddPet>,
+      },
     ],
+  },
+  {
+    path: "*",
+    element: <Error></Error>,
   },
 ]);
 

@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.gs0hh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -60,7 +60,9 @@ async function run() {
 
     // all pets in user dashboard
     app.get("/user/dashboard/pets", async (req, res) => {
-      const result = await petsCollection.find({ approved: true, adoptionStatus: "Available" }).toArray();
+      const result = await petsCollection
+        .find({ approved: true, adoptionStatus: "Available" })
+        .toArray();
       res.send(result);
     });
 
@@ -78,7 +80,7 @@ async function run() {
         const { userEmail, petId, pet } = req.body;
         const existingBookmark = await bookmarksCollection.findOne({
           userEmail,
-          petId
+          petId,
         });
 
         if (existingBookmark) {
@@ -89,7 +91,7 @@ async function run() {
           userEmail,
           petId,
           pet,
-          createdAt: new Date()
+          createdAt: new Date(),
         });
 
         res.send(result);
@@ -120,7 +122,7 @@ async function run() {
         const result = await bookmarksCollection.deleteOne(query);
         res.send(result);
       } catch (error) {
-        res.status(500).json({ error: error.message }); 
+        res.status(500).json({ error: error.message });
       }
     });
 
@@ -163,8 +165,8 @@ async function run() {
           $set: {
             adoptionStatus: "pending",
             requestedBy: payment.customerEmail,
-            requestedAt: new Date()
-          }
+            requestedAt: new Date(),
+          },
         };
         await petsCollection.updateOne(filter, updateDoc);
 
@@ -181,7 +183,6 @@ async function run() {
       const result = await paymentsCollection.find(query).toArray();
       res.send(result);
     });
-
 
     // Create volunteer
     app.post("/volunteers", async (req, res) => {
@@ -252,9 +253,14 @@ async function run() {
         const email = req.params.email;
         const query = { email: email };
         const result = await adminsCollection.findOne(query);
-        res.send(result);
+
+        if (!result) {
+          return res.status(404).json({ message: "Admin not found" });
+        }
+
+        res.json(result);
       } catch (error) {
-        res.status(500).send({ error: error.message });
+        res.status(500).json({ error: error.message });
       }
     });
 
@@ -387,13 +393,17 @@ async function run() {
 
     // all pets in admin dashboard
     app.get("/admin/pets", async (req, res) => {
-      const result = await petsCollection.find({ approved: true, adoptionStatus: "Available" }).toArray();
+      const result = await petsCollection
+        .find({ approved: true, adoptionStatus: "Available" })
+        .toArray();
       res.send(result);
     });
 
     // all adopted pets in admin dashboard
     app.get("/admin/pets/adopted", async (req, res) => {
-      const result = await petsCollection.find({ adoptionStatus: "adopted" }).toArray();
+      const result = await petsCollection
+        .find({ adoptionStatus: "adopted" })
+        .toArray();
       res.send(result);
     });
 
@@ -444,7 +454,9 @@ async function run() {
 
     // all adoption requests in admin dashboard
     app.get("/admin/adoption-requests", async (req, res) => {
-      const result = await paymentsCollection.find({ approvalStatus: "pending" }).toArray();
+      const result = await paymentsCollection
+        .find({ approvalStatus: "pending" })
+        .toArray();
       res.send(result);
     });
 
@@ -453,16 +465,18 @@ async function run() {
       try {
         const id = req.params.id;
         const { approvalStatus } = req.body;
-        
+
         // Update the payment status
         const paymentResult = await paymentsCollection.updateOne(
           { _id: new ObjectId(id) },
           { $set: { approvalStatus } }
         );
-    
+
         // If approved, also update the pet's adoption status
         if (approvalStatus === "approved") {
-          const payment = await paymentsCollection.findOne({ _id: new ObjectId(id) });
+          const payment = await paymentsCollection.findOne({
+            _id: new ObjectId(id),
+          });
           if (payment) {
             await petsCollection.updateOne(
               { _id: new ObjectId(payment.petId) },
@@ -470,30 +484,37 @@ async function run() {
             );
           }
         }
-    
+
         res.json({ success: true, message: "Status updated successfully" });
       } catch (error) {
         console.error("Error updating adoption request:", error);
-        res.status(500).json({ success: false, message: "Error updating status" });
+        res
+          .status(500)
+          .json({ success: false, message: "Error updating status" });
       }
     });
-    
 
     // make a adopted pet route
     app.get("/admin/pets/adopted", async (req, res) => {
-      const result = await petsCollection.find({ adoptionStatus: "adopted" }).toArray();
+      const result = await petsCollection
+        .find({ adoptionStatus: "adopted" })
+        .toArray();
       res.send(result);
     });
 
     // all approved adoption requests in admin dashboard
     app.get("/admin/adoption-requests/approved", async (req, res) => {
-      const result = await paymentsCollection.find({ approvalStatus: "approved" }).toArray();
+      const result = await paymentsCollection
+        .find({ approvalStatus: "approved" })
+        .toArray();
       res.send(result);
     });
 
     // all rejected adoption requests in admin dashboard
     app.get("/admin/adoption-requests/rejected", async (req, res) => {
-      const result = await paymentsCollection.find({ approvalStatus: "rejected" }).toArray();
+      const result = await paymentsCollection
+        .find({ approvalStatus: "rejected" })
+        .toArray();
       res.send(result);
     });
 
@@ -505,7 +526,9 @@ async function run() {
 
     // all pets in volunteer dashboard
     app.get("/volunteer/dashboard/pets", async (req, res) => {
-      const result = await petsCollection.find({ approved: true, adoptionStatus: "Available" }).toArray();
+      const result = await petsCollection
+        .find({ approved: true, adoptionStatus: "Available" })
+        .toArray();
       res.send(result);
     });
 
